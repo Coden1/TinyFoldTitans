@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,6 +10,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
@@ -178,6 +180,47 @@ export const ProteinPredictor = () => {
   const [preds, setPreds] = useState<ResiduePrediction[] | null>(null);
   const [summary, setSummary] = useState<{ residues: number; chains: number } | null>(null);
   const [hoveredResidue, setHoveredResidue] = useState<number | null>(null);
+  const [previousSamples, setPreviousSamples] = useState<Array<{name: string, pdbId: string, sequence: string}>>([]);
+
+  // Load previous samples from localStorage on component mount
+  useEffect(() => {
+    const saved = localStorage.getItem('proteinPredictor_previousSamples');
+    if (saved) {
+      try {
+        setPreviousSamples(JSON.parse(saved));
+      } catch (e) {
+        console.warn('Failed to parse saved samples');
+      }
+    }
+  }, []);
+
+  const saveSampleToHistory = (pdbId: string, sequence: string) => {
+    const trimmedPdbId = pdbId.trim().toUpperCase();
+    const trimmedSequence = sequence.replace(/\s|\n|;/g, "").toUpperCase();
+    
+    if (!trimmedPdbId && !trimmedSequence) return;
+    
+    const name = trimmedPdbId 
+      ? `${trimmedPdbId} - User Input`
+      : `Sequence (${trimmedSequence.length} residues)`;
+    
+    const newSample = {
+      name,
+      pdbId: trimmedPdbId,
+      sequence: trimmedSequence
+    };
+    
+    // Check if this combination already exists
+    const exists = previousSamples.some(s => 
+      s.pdbId === trimmedPdbId && s.sequence === trimmedSequence
+    );
+    
+    if (!exists) {
+      const updated = [newSample, ...previousSamples].slice(0, 5); // Keep only 5 most recent
+      setPreviousSamples(updated);
+      localStorage.setItem('proteinPredictor_previousSamples', JSON.stringify(updated));
+    }
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -215,6 +258,9 @@ export const ProteinPredictor = () => {
       setSummary(null);
       setResolvedSequence("");
       setResolvedPdbId("");
+
+      // Save to history before making the API call
+      saveSampleToHistory(id, seqNormalized);
 
       // Call the new backend API that accepts either sequence or pdb_id
       const result = await predictSecondaryStructure(seqNormalized || undefined, id || undefined);
@@ -295,10 +341,26 @@ export const ProteinPredictor = () => {
                 Load Sample <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 bg-popover border shadow-md z-50">
+            <DropdownMenuContent align="end" className="w-64 bg-popover border shadow-md z-50">
+              {previousSamples.length > 0 && (
+                <>
+                  <DropdownMenuLabel>Previous Samples</DropdownMenuLabel>
+                  {previousSamples.map((sample, index) => (
+                    <DropdownMenuItem
+                      key={`prev-${index}`}
+                      onClick={() => loadSampleData(sample)}
+                      className="cursor-pointer hover:bg-accent focus:bg-accent"
+                    >
+                      {sample.name}
+                    </DropdownMenuItem>
+                  ))}
+                  <DropdownMenuSeparator />
+                </>
+              )}
+              <DropdownMenuLabel>Sample Data</DropdownMenuLabel>
               {SAMPLE_DATA.map((sample, index) => (
                 <DropdownMenuItem
-                  key={index}
+                  key={`sample-${index}`}
                   onClick={() => loadSampleData(sample)}
                   className="cursor-pointer hover:bg-accent focus:bg-accent"
                 >
