@@ -467,11 +467,11 @@ export const ProteinPredictor = () => {
                 </div>
                 <div>
                   <h5 className="font-medium mb-2">8-State Classification</h5>
-                  <p className="text-muted-foreground">Detailed secondary structure prediction with 8 distinct structural states: α-helix (H), 3₁₀-helix (G), π-helix (I), extended β-strand (E), isolated β-bridge (B), turn (T), bend (S), and coil/loop (C).</p>
+                  <p className="text-muted-foreground">Detailed secondary structure prediction with 8 distinct structural states: α-helix (H), 3₁₀-helix (G), π-helix (I), β-strand (E), β-bridge (B), turn (T), bend (S), and coil (C).</p>
                 </div>
                 <div>
                   <h5 className="font-medium mb-2">3-State Classification</h5>
-                  <p className="text-muted-foreground">Simplified secondary structure prediction with 3 main states: helix (H), extended/strand (E), and coil/loop (C). This is a condensed version of the 8-state prediction.</p>
+                  <p className="text-muted-foreground">Simplified secondary structure prediction with 3 main states: helix (H), strand (E), and coil (C). This is a condensed version of the 8-state prediction.</p>
                 </div>
               </div>
             </div>

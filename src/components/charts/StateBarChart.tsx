@@ -9,11 +9,11 @@ const stateNames = {
   "H": "α-helix",
   "G": "3₁₀-helix",
   "I": "π-helix",
-  "E": "extended β-strand",
-  "B": "isolated β-bridge",
+  "E": "β-strand",
+  "B": "β-bridge",
   "T": "turn",
   "S": "bend",
-  "C": "coil or loop"
+  "C": "coil"
 } as const;
 
 type Props = {
