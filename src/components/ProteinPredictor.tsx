@@ -159,6 +159,15 @@ export const ProteinPredictor = () => {
       return;
     }
 
+    // Validate amino acid sequence
+    if (seqNormalized) {
+      const validAminoAcids = /^[ACEDGFIHKMLNQPSRTWVY]+$/;
+      if (!validAminoAcids.test(seqNormalized)) {
+        toast.error("Sequence contains invalid characters. Only these amino acid letters are allowed: A, C, E, D, G, F, I, H, K, M, L, N, Q, P, S, R, T, W, V, Y");
+        return;
+      }
+    }
+
     try {
       setLoading(true);
       setPreds(null);
