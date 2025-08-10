@@ -83,7 +83,7 @@ export default function StateBarChart({ data, mode, hoveredIndex }: Props) {
               style={{ backgroundColor: colorForState(s) }}
               className="inline-block size-3 rounded-sm border"
             />
-            {stateNames[s as keyof typeof stateNames]}
+            {stateNames[s as keyof typeof stateNames]} ({s})
           </span>
         ))}
       </div>
