@@ -4,13 +4,12 @@ import type { ResiduePrediction } from "../ProteinPredictor";
 
 type Props = {
   data: ResiduePrediction[];
-  mode: "8" | "3";
 };
 
-export default function ConfidenceLineChart({ data, mode }: Props) {
+export default function ConfidenceLineChart({ data }: Props) {
   const chartData = data.map((d) => ({
     index: d.index,
-    conf: mode === "8" ? d.conf8 : d.conf3,
+    conf: d.conf8,
   }));
 
   return (

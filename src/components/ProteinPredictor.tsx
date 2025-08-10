@@ -265,16 +265,12 @@ const ProteinPredictor = () => {
                 <StateBarChart data={preds} mode="8" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold mb-3">Per-residue Confidence — 8 states</h3>
-                <ConfidenceLineChart data={preds} mode="8" />
+                <h3 className="text-lg font-semibold mb-3">Per-residue Confidence</h3>
+                <ConfidenceLineChart data={preds} />
               </div>
               <div>
                 <h3 className="text-lg font-semibold mb-3">Secondary Structure — 3 states</h3>
                 <StateBarChart data={preds} mode="3" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Per-residue Confidence — 3 states</h3>
-                <ConfidenceLineChart data={preds} mode="3" />
               </div>
             </div>
             <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
