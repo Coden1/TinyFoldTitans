@@ -30,7 +30,7 @@ export default function ConfidenceLineChart({ data, onHover, onLeave }: Props) {
       <ResponsiveContainer width="100%" height="100%">
         <LineChart 
           data={chartData} 
-          margin={{ top: 4, right: 24, bottom: 20, left: 24 }}
+          margin={{ top: 4, right: 8, bottom: 0, left: 8 }}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
         >
