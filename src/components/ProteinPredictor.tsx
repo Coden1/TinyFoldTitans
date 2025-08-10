@@ -349,7 +349,6 @@ export const ProteinPredictor = () => {
               Need Examples?
               <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
             </a>
-            <span className="text-xs text-muted-foreground">(Search for Protein)</span>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
