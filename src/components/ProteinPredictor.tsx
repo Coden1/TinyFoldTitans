@@ -275,7 +275,7 @@ const ProteinPredictor = () => {
             </div>
             <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
               <p className="text-sm text-muted-foreground">
-                Average confidence — 8 states: <span className="font-medium text-foreground">{(preds.reduce((a, p) => a + p.conf8, 0) / preds.length).toFixed(3)}</span>; 3 states: <span className="font-medium text-foreground">{(preds.reduce((a, p) => a + p.conf3, 0) / preds.length).toFixed(3)}</span>
+                Average confidence: <span className="font-medium text-foreground">{(preds.reduce((a, p) => a + p.conf8, 0) / preds.length).toFixed(3)}</span>
               </p>
               <div className="flex gap-2">
                 <Button variant="secondary" onClick={() => downloadCsv("8")}>
