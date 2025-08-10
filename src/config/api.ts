@@ -1,6 +1,6 @@
 
 export const API_CONFIG = {
-  BASE_URL: "https://2a2f65fe8dcb.ngrok-free.app",
+  BASE_URL: "https://aacebdac5c0a.ngrok-free.app",
   ENDPOINTS: {
     PREDICT: "/predict"
   }
