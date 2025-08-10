@@ -425,18 +425,18 @@ export const ProteinPredictor = () => {
               <div>
                 <h3 className="text-lg font-semibold mb-3">Secondary Structure — 8 states</h3>
                 <StateBarChart data={preds} mode="8" hoveredIndex={hoveredResidue} />
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold mb-3">Confidence</h3>
+                  <ConfidenceLineChart 
+                    data={preds} 
+                    onHover={setHoveredResidue}
+                    onLeave={() => setHoveredResidue(null)}
+                  />
+                </div>
               </div>
               <div>
                 <h3 className="text-lg font-semibold mb-3">Secondary Structure — 3 states</h3>
                 <StateBarChart data={preds} mode="3" hoveredIndex={hoveredResidue} />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Confidence</h3>
-                <ConfidenceLineChart 
-                  data={preds} 
-                  onHover={setHoveredResidue}
-                  onLeave={() => setHoveredResidue(null)}
-                />
               </div>
             </div>
             <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
