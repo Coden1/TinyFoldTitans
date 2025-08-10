@@ -16,9 +16,9 @@ const Index = () => {
       <header className="py-10">
         <div className="container flex items-start justify-between gap-6">
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Secondary Protein Structure Prediction</h1>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Protein Secondary Structure Prediction</h1>
             <p className="mt-3 text-lg text-muted-foreground max-w-2xl">
-            Enter a Protein Data Bank (PDB) ID to generate per-residue secondary structure (8-state and 3-state) and confidence plots.
+              Enter a Protein Data Bank (PDB) ID to generate per-residue secondary structure (8-state and 3-state) and confidence plots.
             </p>
           </div>
           <div className="flex items-baseline gap-2"><span className="italic text-xs text-muted-foreground">by</span><span className="font-brand text-xl md:text-2xl font-semibold tracking-tight">TinyFoldTitans</span></div>
