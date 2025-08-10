@@ -258,9 +258,11 @@ export const ProteinPredictor = () => {
           </Button>
         </form>
 
-        {summary && (
+        {(sequence.replace(/\s|\n|;/g, "").length > 0 || summary) && (
           <div className="mt-4 text-sm text-muted-foreground space-y-1">
-            <p>Entry summary: {summary.residues} residues across {summary.chains} chain(s)</p>
+            <p>
+              Entry summary: <span className="text-foreground">{sequence.replace(/\s|\n|;/g, "").length || summary?.residues || 0}</span> residues
+            </p>
             <p>
               PDB ID: <span className="text-foreground">{pdbId.trim() ? pdbId.trim().toUpperCase() : "-"}</span>
             </p>
