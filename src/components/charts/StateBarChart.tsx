@@ -5,6 +5,17 @@ import type { ResiduePrediction } from "../ProteinPredictor";
 const state8Order = ["H", "G", "I", "E", "B", "T", "S", "C"] as const;
 const state3Order = ["H", "E", "C"] as const;
 
+const stateNames = {
+  "H": "α-helix",
+  "G": "3₁₀-helix",
+  "I": "π-helix",
+  "E": "extended β-strand",
+  "B": "isolated β-bridge",
+  "T": "turn",
+  "S": "bend",
+  "C": "coil or loop"
+} as const;
+
 type Props = {
   data: ResiduePrediction[];
   mode: "8" | "3";
@@ -72,7 +83,7 @@ export default function StateBarChart({ data, mode, hoveredIndex }: Props) {
               style={{ backgroundColor: colorForState(s) }}
               className="inline-block size-3 rounded-sm border"
             />
-            {s}
+            {stateNames[s as keyof typeof stateNames]}
           </span>
         ))}
       </div>
