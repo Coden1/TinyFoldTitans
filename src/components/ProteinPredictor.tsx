@@ -337,9 +337,19 @@ export const ProteinPredictor = () => {
         onMouseMove={handleMouseMove}
       >
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm text-muted-foreground">
-            Either protein sequence or PDB ID have to be entered.
-          </p>
+          <div className="flex items-center gap-3">
+            <p className="text-sm text-muted-foreground">Either protein sequence or PDB ID have to be entered.</p>
+            <a
+              href="https://www.rcsb.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open Protein Data Bank website in a new tab"
+              className="inline-flex items-center gap-1 text-xs text-primary hover:underline underline-offset-4 px-2 py-1 rounded-md border bg-muted/50"
+            >
+              Examples: RCSB PDB
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+            </a>
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="gap-2">
@@ -374,29 +384,6 @@ export const ProteinPredictor = () => {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
-        <div className="mb-4 p-4 bg-muted/50 rounded-md border">
-          <div className="flex items-start gap-3">
-            <ExternalLink className="h-5 w-5 text-primary mt-0.5" aria-hidden="true" />
-            <div className="text-sm">
-              <p className="text-muted-foreground">
-                Need examples? Browse the Protein Data Bank (PDB) to find IDs or copy sequences.
-              </p>
-              <div className="mt-2">
-                <Button asChild size="sm" variant="secondary" className="gap-2">
-                  <a
-                    href="https://www.rcsb.org/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Open Protein Data Bank website in a new tab"
-                  >
-                    Open RCSB PDB
-                    <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                  </a>
-                </Button>
-              </div>
-            </div>
-          </div>
         </div>
         <form onSubmit={onSubmit} className="flex flex-col md:flex-row gap-3 items-stretch md:items-end">
           <div className="flex-1">
