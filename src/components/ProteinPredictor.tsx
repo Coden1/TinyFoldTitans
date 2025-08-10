@@ -92,11 +92,24 @@ async function fetchProteinSequences(pdbId: string): Promise<string[]> {
 }
 
 async function predictSecondaryStructure(sequence: string): Promise<ResiduePrediction[]> {
-  const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PREDICT}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sequence })
-  });
+  const isHttps = window.location.protocol === "https:";
+  const isHttpTarget = API_CONFIG.BASE_URL.startsWith("http://");
+  if (isHttps && isHttpTarget) {
+    throw new Error(
+      "Mixed content: App läuft über HTTPS, Backend ist HTTP (127.0.0.1). Verwende eine öffentliche HTTPS-URL (z.B. ngrok/Cloudflare Tunnel) oder starte das Frontend lokal über http."
+    );
+  }
+
+  let response: Response;
+  try {
+    response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PREDICT}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sequence })
+    });
+  } catch (e) {
+    throw new Error("Netzwerkfehler: Backend nicht erreichbar. Läuft der Server und sind CORS/HTTPS korrekt?");
+  }
   
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: "Request failed" }));
