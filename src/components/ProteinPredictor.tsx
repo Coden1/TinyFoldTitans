@@ -217,6 +217,7 @@ export const ProteinPredictor = () => {
         className="ambient-bg rounded-xl border p-6 md:p-8 shadow-[var(--shadow-elegant)]"
         onMouseMove={handleMouseMove}
       >
+        <p className="text-sm text-muted-foreground mb-4">Either protein sequence or PDB ID have to be entered.</p>
         <form onSubmit={onSubmit} className="flex flex-col md:flex-row gap-3 items-stretch md:items-end">
           <div className="flex-1">
             <label htmlFor="seq" className="block text-sm font-medium text-muted-foreground mb-2">
