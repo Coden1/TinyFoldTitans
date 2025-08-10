@@ -91,7 +91,7 @@ async function fetchProteinSequences(pdbId: string): Promise<string[]> {
   return seqs;
 }
 
-async function predictSecondaryStructure(sequence?: string, pdbId?: string): Promise<{ predictions: ResiduePrediction[], usedSequence: string }> {
+async function predictSecondaryStructure(sequence?: string, pdbId?: string): Promise<{ predictions: ResiduePrediction[], usedSequence: string, foundPdbId: string }> {
   const isHttps = window.location.protocol === "https:";
   const isHttpTarget = API_CONFIG.BASE_URL.startsWith("http://");
   if (isHttps && isHttpTarget) {
@@ -121,6 +121,7 @@ async function predictSecondaryStructure(sequence?: string, pdbId?: string): Pro
   const ss: string = data.pred_ss || "";
   const confs: number[] = data.confidences || [];
   const usedSequence: string = data.used_sequence || "";
+  const foundPdbId: string = data.pdb_id || data.found_pdb_id || "";
   
   const n = Math.min(ss.length, confs.length);
   const predictions: ResiduePrediction[] = [];
@@ -140,13 +141,14 @@ async function predictSecondaryStructure(sequence?: string, pdbId?: string): Pro
     });
   }
   
-  return { predictions, usedSequence };
+  return { predictions, usedSequence, foundPdbId };
 }
 
 export const ProteinPredictor = () => {
   const [pdbId, setPdbId] = useState<string>("");
   const [sequence, setSequence] = useState<string>("");
   const [resolvedSequence, setResolvedSequence] = useState<string>("");
+  const [resolvedPdbId, setResolvedPdbId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [preds, setPreds] = useState<ResiduePrediction[] | null>(null);
   const [summary, setSummary] = useState<{ residues: number; chains: number } | null>(null);
@@ -187,6 +189,7 @@ export const ProteinPredictor = () => {
       setPreds(null);
       setSummary(null);
       setResolvedSequence("");
+      setResolvedPdbId("");
 
       // Call the new backend API that accepts either sequence or pdb_id
       const result = await predictSecondaryStructure(seqNormalized || undefined, id || undefined);
@@ -197,6 +200,11 @@ export const ProteinPredictor = () => {
       
       // Use the actual sequence that was used for prediction from the backend
       setResolvedSequence(result.usedSequence || seqNormalized || "");
+      
+      // If backend found a PDB ID from sequence, store it
+      if (result.foundPdbId) {
+        setResolvedPdbId(result.foundPdbId);
+      }
       
       if (seqNormalized) {
         toast.success(`Predicted ${result.predictions.length} residues from sequence`);
@@ -286,7 +294,7 @@ export const ProteinPredictor = () => {
               Entry summary: <span className="text-foreground">{sequence.replace(/\s|\n|;/g, "").length || summary?.residues || 0}</span> residues
             </p>
             <p>
-              PDB ID: <span className="text-foreground">{pdbId.trim() ? pdbId.trim().toUpperCase() : "-"}</span>
+              PDB ID: <span className="text-foreground">{resolvedPdbId || (pdbId.trim() ? pdbId.trim().toUpperCase() : "-")}</span>
             </p>
             <p className="break-words">
               Sequence: <span className="text-foreground font-mono">{resolvedSequence ? resolvedSequence : "-"}</span>
