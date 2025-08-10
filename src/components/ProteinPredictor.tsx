@@ -260,18 +260,16 @@ export const ProteinPredictor = () => {
 
         {preds && (
           <>
-            <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-1 space-y-8">
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Secondary Structure — 8 states</h3>
-                  <StateBarChart data={preds} mode="8" hoveredIndex={hoveredResidue} />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Secondary Structure — 3 states</h3>
-                  <StateBarChart data={preds} mode="3" hoveredIndex={hoveredResidue} />
-                </div>
+            <div className="mt-8 space-y-8">
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Secondary Structure — 8 states</h3>
+                <StateBarChart data={preds} mode="8" hoveredIndex={hoveredResidue} />
               </div>
-              <div className="lg:col-span-2">
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Secondary Structure — 3 states</h3>
+                <StateBarChart data={preds} mode="3" hoveredIndex={hoveredResidue} />
+              </div>
+              <div>
                 <h3 className="text-lg font-semibold mb-3">Per-residue Confidence</h3>
                 <ConfidenceLineChart 
                   data={preds} 
