@@ -260,16 +260,18 @@ export const ProteinPredictor = () => {
 
         {preds && (
           <>
-            <div className="mt-8 grid grid-cols-1 gap-8">
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Secondary Structure — 8 states</h3>
-                <StateBarChart data={preds} mode="8" hoveredIndex={hoveredResidue} />
+            <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-1 space-y-8">
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Secondary Structure — 8 states</h3>
+                  <StateBarChart data={preds} mode="8" hoveredIndex={hoveredResidue} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Secondary Structure — 3 states</h3>
+                  <StateBarChart data={preds} mode="3" hoveredIndex={hoveredResidue} />
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Secondary Structure — 3 states</h3>
-                <StateBarChart data={preds} mode="3" hoveredIndex={hoveredResidue} />
-              </div>
-              <div>
+              <div className="lg:col-span-2">
                 <h3 className="text-lg font-semibold mb-3">Per-residue Confidence</h3>
                 <ConfidenceLineChart 
                   data={preds} 
@@ -289,6 +291,29 @@ export const ProteinPredictor = () => {
                 <Button variant="secondary" onClick={() => downloadCsv("3")}>
                   Download 3-state CSV
                 </Button>
+              </div>
+            </div>
+            
+            {/* Explanation Box */}
+            <div className="mt-8 p-6 bg-muted/50 rounded-lg border">
+              <h4 className="text-lg font-semibold mb-4">Understanding the Results</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <h5 className="font-medium mb-2">PDB ID</h5>
+                  <p className="text-muted-foreground">A unique 4-character identifier for protein structures in the Protein Data Bank.</p>
+                </div>
+                <div>
+                  <h5 className="font-medium mb-2">Protein Sequence</h5>
+                  <p className="text-muted-foreground">The linear chain of amino acids that forms the protein, represented by single-letter codes.</p>
+                </div>
+                <div>
+                  <h5 className="font-medium mb-2">8-State Classification</h5>
+                  <p className="text-muted-foreground">Detailed secondary structure prediction with 8 distinct structural states: α-helix (H), 3₁₀-helix (G), π-helix (I), extended β-strand (E), isolated β-bridge (B), turn (T), bend (S), and coil/loop (C).</p>
+                </div>
+                <div>
+                  <h5 className="font-medium mb-2">3-State Classification</h5>
+                  <p className="text-muted-foreground">Simplified secondary structure prediction with 3 main states: helix (H), extended/strand (E), and coil/loop (C). This is a condensed version of the 8-state prediction.</p>
+                </div>
               </div>
             </div>
           </>
