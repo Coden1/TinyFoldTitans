@@ -140,12 +140,13 @@ async function predictSecondaryStructure(sequence: string): Promise<ResiduePredi
   return predictions;
 }
 
-const ProteinPredictor = () => {
-  const [pdbId, setPdbId] = useState("");
-  const [sequence, setSequence] = useState("");
-  const [loading, setLoading] = useState(false);
+export const ProteinPredictor = () => {
+  const [pdbId, setPdbId] = useState<string>("");
+  const [sequence, setSequence] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const [preds, setPreds] = useState<ResiduePrediction[] | null>(null);
-  const [summary, setSummary] = useState<{ chains: number; residues: number } | null>(null);
+  const [summary, setSummary] = useState<{ residues: number; chains: number } | null>(null);
+  const [hoveredResidue, setHoveredResidue] = useState<number | null>(null);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -262,15 +263,19 @@ const ProteinPredictor = () => {
             <div className="mt-8 grid grid-cols-1 gap-8">
               <div>
                 <h3 className="text-lg font-semibold mb-3">Secondary Structure — 8 states</h3>
-                <StateBarChart data={preds} mode="8" />
+                <StateBarChart data={preds} mode="8" hoveredIndex={hoveredResidue} />
               </div>
               <div>
                 <h3 className="text-lg font-semibold mb-3">Secondary Structure — 3 states</h3>
-                <StateBarChart data={preds} mode="3" />
+                <StateBarChart data={preds} mode="3" hoveredIndex={hoveredResidue} />
               </div>
               <div>
                 <h3 className="text-lg font-semibold mb-3">Per-residue Confidence</h3>
-                <ConfidenceLineChart data={preds} />
+                <ConfidenceLineChart 
+                  data={preds} 
+                  onHover={setHoveredResidue}
+                  onLeave={() => setHoveredResidue(null)}
+                />
               </div>
             </div>
             <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">

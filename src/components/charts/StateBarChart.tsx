@@ -8,6 +8,7 @@ const state3Order = ["H", "E", "C"] as const;
 type Props = {
   data: ResiduePrediction[];
   mode: "8" | "3";
+  hoveredIndex?: number | null;
 };
 
 function colorForState(s: string): string {
@@ -31,11 +32,12 @@ function colorForState(s: string): string {
   }
 }
 
-export default function StateBarChart({ data, mode }: Props) {
+export default function StateBarChart({ data, mode, hoveredIndex }: Props) {
   const chartData = data.map((d) => ({
     index: d.index,
     state: mode === "8" ? d.state8 : d.state3,
     value: 1,
+    isHovered: hoveredIndex === d.index,
   }));
 
   return (
@@ -51,7 +53,13 @@ export default function StateBarChart({ data, mode }: Props) {
           />
           <Bar dataKey="value" isAnimationActive={false}>
             {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={colorForState(entry.state)} />
+              <Cell 
+                key={`cell-${index}`} 
+                fill={colorForState(entry.state)} 
+                opacity={entry.isHovered ? 1 : hoveredIndex ? 0.3 : 1}
+                stroke={entry.isHovered ? "hsl(var(--foreground))" : "none"}
+                strokeWidth={entry.isHovered ? 2 : 0}
+              />
             ))}
           </Bar>
         </BarChart>
