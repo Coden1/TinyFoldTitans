@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import StateBarChart from "./charts/StateBarChart";
 import ConfidenceLineChart from "./charts/ConfidenceLineChart";
@@ -103,20 +104,23 @@ async function predictSecondaryStructure(sequence: string): Promise<ResiduePredi
   }
   
   const data = await response.json();
+  const ss: string = data.pred_ss || "";
+  const confs: number[] = data.confidences || [];
+  const n = Math.min(ss.length, confs.length);
   const predictions: ResiduePrediction[] = [];
   
-  for (let i = 0; i < data.length; i++) {
-    const state8 = data.pred_ss[i] as ResiduePrediction["state8"];
+  for (let i = 0; i < n; i++) {
+    const state8 = ss[i] as ResiduePrediction["state8"];
     const state3 = map8to3(state8);
-    const conf8 = data.confidences[i];
-    const conf3 = conf8 - Math.random() * 0.05; // Slight variation for 3-state
+    const conf8 = confs[i];
+    const conf3 = Math.max(0.5, Math.min(0.98, conf8 - Math.random() * 0.05));
     
     predictions.push({
       index: i + 1,
       state8,
       state3,
       conf8: Math.max(0.5, Math.min(0.98, conf8)),
-      conf3: Math.max(0.5, Math.min(0.98, conf3))
+      conf3
     });
   }
   
@@ -125,6 +129,7 @@ async function predictSecondaryStructure(sequence: string): Promise<ResiduePredi
 
 const ProteinPredictor = () => {
   const [pdbId, setPdbId] = useState("");
+  const [sequence, setSequence] = useState("");
   const [loading, setLoading] = useState(false);
   const [preds, setPreds] = useState<ResiduePrediction[] | null>(null);
   const [summary, setSummary] = useState<{ chains: number; residues: number } | null>(null);
@@ -132,22 +137,33 @@ const ProteinPredictor = () => {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const id = pdbId.trim().toUpperCase();
-    if (!/^\w{4}$/.test(id)) {
-      toast.error("Please enter a valid 4-character PDB ID (e.g., 1CRN)");
+    const seqNormalized = sequence.replace(/\s|\n|;/g, "").toUpperCase();
+
+    if (!seqNormalized && !/^\w{4}$/.test(id)) {
+      toast.error("Please enter a sequence or a valid 4-character PDB ID (e.g., 1CRN)");
       return;
     }
+
     try {
       setLoading(true);
       setPreds(null);
-      const seqs = await fetchProteinSequences(id);
-      const total = seqs.reduce((a, s) => a + s.length, 0);
-      setSummary({ chains: seqs.length, residues: total });
-      
-      // Use the first (longest) sequence for prediction
-      const longestSeq = seqs.reduce((a, b) => a.length > b.length ? a : b);
-      const predictions = await predictSecondaryStructure(longestSeq);
-      setPreds(predictions);
-      toast.success(`Predicted ${predictions.length} residues for primary chain`);
+
+      if (seqNormalized) {
+        setSummary({ chains: 1, residues: seqNormalized.length });
+        const predictions = await predictSecondaryStructure(seqNormalized);
+        setPreds(predictions);
+        toast.success(`Predicted ${predictions.length} residues from sequence`);
+      } else {
+        const seqs = await fetchProteinSequences(id);
+        const total = seqs.reduce((a, s) => a + s.length, 0);
+        setSummary({ chains: seqs.length, residues: total });
+        
+        // Use the first (longest) sequence for prediction
+        const longestSeq = seqs.reduce((a, b) => a.length > b.length ? a : b);
+        const predictions = await predictSecondaryStructure(longestSeq);
+        setPreds(predictions);
+        toast.success(`Predicted ${predictions.length} residues for primary chain`);
+      }
     } catch (err: any) {
       console.error(err);
       toast.error(err?.message || "Failed to fetch entry");
@@ -189,8 +205,22 @@ const ProteinPredictor = () => {
       >
         <form onSubmit={onSubmit} className="flex flex-col md:flex-row gap-3 items-stretch md:items-end">
           <div className="flex-1">
+            <label htmlFor="seq" className="block text-sm font-medium text-muted-foreground mb-2">
+              Protein sequence (optional)
+            </label>
+            <Textarea
+              id="seq"
+              placeholder="Paste FASTA/one-letter sequence"
+              value={sequence}
+              onChange={(e) => setSequence(e.target.value.toUpperCase())}
+              rows={3}
+              spellCheck={false}
+              aria-label="Protein sequence"
+            />
+          </div>
+          <div className="flex-1">
             <label htmlFor="pdb" className="block text-sm font-medium text-muted-foreground mb-2">
-              PDB ID
+              PDB ID (optional)
             </label>
             <Input
               id="pdb"
@@ -222,7 +252,7 @@ const ProteinPredictor = () => {
                 <StateBarChart data={preds} mode="8" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold mb-3">Per-residue Confidence 8 states</h3>
+                <h3 className="text-lg font-semibold mb-3">Per-residue Confidence — 8 states</h3>
                 <ConfidenceLineChart data={preds} mode="8" />
               </div>
               <div>
@@ -230,7 +260,7 @@ const ProteinPredictor = () => {
                 <StateBarChart data={preds} mode="3" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold mb-3">Per-residue Confidence 3 states</h3>
+                <h3 className="text-lg font-semibold mb-3">Per-residue Confidence — 3 states</h3>
                 <ConfidenceLineChart data={preds} mode="3" />
               </div>
             </div>
