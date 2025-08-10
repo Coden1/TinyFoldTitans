@@ -1,6 +1,6 @@
 import ProteinPredictor from "@/components/ProteinPredictor";
 import { Helmet } from "react-helmet-async";
-import TinyFoldTitansLogo from "@/components/TinyFoldTitansLogo";
+
 
 const Index = () => {
   return (
@@ -20,7 +20,7 @@ const Index = () => {
               Enter a PDB ID to generate per-residue secondary structure (8-state and 3-state) and confidence plots.
             </p>
           </div>
-          <TinyFoldTitansLogo />
+          <span className="font-brand text-2xl md:text-3xl font-semibold tracking-tight">TinyFoldTitans</span>
         </div>
       </header>
       <main className="container pb-20">
