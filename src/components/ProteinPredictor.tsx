@@ -91,7 +91,7 @@ async function fetchProteinSequences(pdbId: string): Promise<string[]> {
   return seqs;
 }
 
-async function predictSecondaryStructure(sequence: string): Promise<ResiduePrediction[]> {
+async function predictSecondaryStructure(sequence?: string, pdbId?: string): Promise<{ predictions: ResiduePrediction[], usedSequence: string }> {
   const isHttps = window.location.protocol === "https:";
   const isHttpTarget = API_CONFIG.BASE_URL.startsWith("http://");
   if (isHttps && isHttpTarget) {
@@ -102,10 +102,11 @@ async function predictSecondaryStructure(sequence: string): Promise<ResiduePredi
 
   let response: Response;
   try {
+    const body = sequence ? { sequence } : { pdb_id: pdbId };
     response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PREDICT}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sequence })
+      body: JSON.stringify(body)
     });
   } catch (e) {
     throw new Error("Netzwerkfehler: Backend nicht erreichbar. Läuft der Server und sind CORS/HTTPS korrekt?");
@@ -119,6 +120,8 @@ async function predictSecondaryStructure(sequence: string): Promise<ResiduePredi
   const data = await response.json();
   const ss: string = data.pred_ss || "";
   const confs: number[] = data.confidences || [];
+  const usedSequence: string = data.used_sequence || "";
+  
   const n = Math.min(ss.length, confs.length);
   const predictions: ResiduePrediction[] = [];
   
@@ -137,7 +140,7 @@ async function predictSecondaryStructure(sequence: string): Promise<ResiduePredi
     });
   }
   
-  return predictions;
+  return { predictions, usedSequence };
 }
 
 export const ProteinPredictor = () => {
@@ -154,8 +157,13 @@ export const ProteinPredictor = () => {
     const id = pdbId.trim().toUpperCase();
     const seqNormalized = sequence.replace(/\s|\n|;/g, "").toUpperCase();
 
-    if (!seqNormalized && !/^\w{4}$/.test(id)) {
-      toast.error("Please enter a sequence or a valid 4-character PDB ID (e.g., 1CRN)");
+    if (!seqNormalized && !id) {
+      toast.error("Bitte gib entweder eine Sequenz oder eine PDB ID ein.");
+      return;
+    }
+
+    if (seqNormalized && id) {
+      toast.error("Bitte nur eines eingeben: Sequenz ODER PDB ID.");
       return;
     }
 
@@ -168,31 +176,36 @@ export const ProteinPredictor = () => {
       }
     }
 
+    // Validate PDB ID format
+    if (id && !/^\w{4}$/.test(id)) {
+      toast.error("Please enter a valid 4-character PDB ID (e.g., 1CRN)");
+      return;
+    }
+
     try {
       setLoading(true);
       setPreds(null);
+      setSummary(null);
+      setResolvedSequence("");
 
+      // Call the new backend API that accepts either sequence or pdb_id
+      const result = await predictSecondaryStructure(seqNormalized || undefined, id || undefined);
+      setPreds(result.predictions);
+      
+      // Set summary based on predictions
+      setSummary({ chains: 1, residues: result.predictions.length });
+      
+      // Use the actual sequence that was used for prediction from the backend
+      setResolvedSequence(result.usedSequence || seqNormalized || "");
+      
       if (seqNormalized) {
-        setSummary({ chains: 1, residues: seqNormalized.length });
-        setResolvedSequence(seqNormalized);
-        const predictions = await predictSecondaryStructure(seqNormalized);
-        setPreds(predictions);
-        toast.success(`Predicted ${predictions.length} residues from sequence`);
+        toast.success(`Predicted ${result.predictions.length} residues from sequence`);
       } else {
-        const seqs = await fetchProteinSequences(id);
-        const total = seqs.reduce((a, s) => a + s.length, 0);
-        setSummary({ chains: seqs.length, residues: total });
-        
-        // Use the first (longest) sequence for prediction
-        const longestSeq = seqs.reduce((a, b) => a.length > b.length ? a : b);
-        setResolvedSequence(longestSeq);
-        const predictions = await predictSecondaryStructure(longestSeq);
-        setPreds(predictions);
-        toast.success(`Predicted ${predictions.length} residues for primary chain`);
+        toast.success(`Predicted ${result.predictions.length} residues from PDB ID ${id}`);
       }
     } catch (err: any) {
       console.error(err);
-      toast.error(err?.message || "Failed to fetch entry");
+      toast.error(err?.message || "Failed to get prediction");
     } finally {
       setLoading(false);
     }
