@@ -20,7 +20,7 @@ const Index = () => {
               Enter a PDB ID to generate per-residue secondary structure (8-state and 3-state) and confidence plots.
             </p>
           </div>
-          <div className="flex items-baseline gap-2"><span className="italic text-sm text-muted-foreground">by</span><span className="font-brand text-2xl md:text-3xl font-semibold tracking-tight">TinyFoldTitans</span></div>
+          <div className="flex items-baseline gap-2"><span className="italic text-xs text-muted-foreground">by</span><span className="font-brand text-xl md:text-2xl font-semibold tracking-tight">TinyFoldTitans</span></div>
         </div>
       </header>
       <main className="container pb-20">
