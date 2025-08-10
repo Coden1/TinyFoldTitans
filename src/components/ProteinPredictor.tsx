@@ -6,6 +6,13 @@ import { toast } from "sonner";
 import StateBarChart from "./charts/StateBarChart";
 import ConfidenceLineChart from "./charts/ConfidenceLineChart";
 import { API_CONFIG } from "@/config/api";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 
 export type ResiduePrediction = {
   index: number;
@@ -14,6 +21,24 @@ export type ResiduePrediction = {
   conf8: number; // 0..1
   conf3: number; // 0..1
 };
+
+const SAMPLE_DATA = [
+  {
+    name: "1RCD - Rubredoxin",
+    pdbId: "1RCD",
+    sequence: "MESQVRQNFHQDCEAGLNRTVNLKFHSSYVYLSMASYFNRDDVALSNFAKFFRERSEEEKEHAEKLIEYQNQRGGRVFLQSVEKPERDDWANGLEALQTALKLQKSVNQALLDLHAVAADKSDPHMTDFLESPYLSESVETIKKLGDHITSLKKLWSSHPGMAEYLFNKHTLG"
+  },
+  {
+    name: "1CRN - Crambin",
+    pdbId: "1CRN",
+    sequence: "TTCCPSIVARSNFNVCRLPGTPEAICATYTGCIIIPGATCPGDYAN"
+  },
+  {
+    name: "2DHB - Deoxyhemoglobin",
+    pdbId: "2DHB",
+    sequence: "VLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR"
+  }
+];
 
 function map8to3(s: ResiduePrediction["state8"]): ResiduePrediction["state3"] {
   if (s === "H" || s === "G" || s === "I") return "H";
@@ -244,15 +269,45 @@ export const ProteinPredictor = () => {
     URL.revokeObjectURL(url);
   };
 
+  const loadSampleData = (sample: typeof SAMPLE_DATA[0]) => {
+    setPdbId(sample.pdbId);
+    setSequence(sample.sequence);
+    setResolvedSequence("");
+    setResolvedPdbId("");
+    setPreds(null);
+    setSummary(null);
+    toast.success(`Loaded sample: ${sample.name}`);
+  };
+
   return (
     <section className="relative">
       <div
         className="ambient-bg rounded-xl border p-6 md:p-8 shadow-[var(--shadow-elegant)]"
         onMouseMove={handleMouseMove}
       >
-        <p className="text-sm text-muted-foreground mb-4">
-          Either protein sequence or PDB ID have to be entered.
-        </p>
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-sm text-muted-foreground">
+            Either protein sequence or PDB ID have to be entered.
+          </p>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                Load Sample <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 bg-popover border shadow-md z-50">
+              {SAMPLE_DATA.map((sample, index) => (
+                <DropdownMenuItem
+                  key={index}
+                  onClick={() => loadSampleData(sample)}
+                  className="cursor-pointer hover:bg-accent focus:bg-accent"
+                >
+                  {sample.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
         <form onSubmit={onSubmit} className="flex flex-col md:flex-row gap-3 items-stretch md:items-end">
           <div className="flex-1">
             <label htmlFor="seq" className="block text-sm font-medium text-muted-foreground mb-2">
