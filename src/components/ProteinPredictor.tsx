@@ -14,7 +14,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ExternalLink } from "lucide-react";
 
 export type ResiduePrediction = {
   index: number;
@@ -375,17 +375,28 @@ export const ProteinPredictor = () => {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="mb-4 p-3 bg-muted/50 rounded-md border text-sm">
-          Need examples? Browse the Protein Data Bank (PDB) and copy IDs or sequences from there: 
-          <a
-            href="https://www.rcsb.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary underline underline-offset-4"
-            aria-label="Visit the Protein Data Bank website"
-          >
-            rcsb.org
-          </a>.
+        <div className="mb-4 p-4 bg-muted/50 rounded-md border">
+          <div className="flex items-start gap-3">
+            <ExternalLink className="h-5 w-5 text-primary mt-0.5" aria-hidden="true" />
+            <div className="text-sm">
+              <p className="text-muted-foreground">
+                Need examples? Browse the Protein Data Bank (PDB) to find IDs or copy sequences.
+              </p>
+              <div className="mt-2">
+                <Button asChild size="sm" variant="secondary" className="gap-2">
+                  <a
+                    href="https://www.rcsb.org/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Open Protein Data Bank website in a new tab"
+                  >
+                    Open RCSB PDB
+                    <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                  </a>
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
         <form onSubmit={onSubmit} className="flex flex-col md:flex-row gap-3 items-stretch md:items-end">
           <div className="flex-1">

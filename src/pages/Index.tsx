@@ -11,6 +11,7 @@ const Index = () => {
         <link rel="canonical" href={typeof window !== 'undefined' ? window.location.href : '/'} />
         <meta property="og:title" content="Protein Secondary Structure Predictor" />
         <meta property="og:description" content="Enter a PDB ID to get 3-state and 8-state secondary structure plots with confidence." />
+        <meta property="og:type" content="website" />
       </Helmet>
       <header className="py-10">
         <div className="container flex items-start justify-between gap-6">
