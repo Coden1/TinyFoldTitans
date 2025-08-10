@@ -1,5 +1,6 @@
 import ProteinPredictor from "@/components/ProteinPredictor";
 import { Helmet } from "react-helmet-async";
+import TinyFoldTitansLogo from "@/components/TinyFoldTitansLogo";
 
 const Index = () => {
   return (
@@ -12,11 +13,14 @@ const Index = () => {
         <meta property="og:description" content="Enter a PDB ID to get 3-state and 8-state secondary structure plots with confidence." />
       </Helmet>
       <header className="py-10">
-        <div className="container">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Protein Secondary Structure Prediction</h1>
-          <p className="mt-3 text-lg text-muted-foreground max-w-2xl">
-            Enter a PDB ID to generate per-residue secondary structure (8-state and 3-state) and confidence plots.
-          </p>
+        <div className="container flex items-start justify-between gap-6">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Protein Secondary Structure Prediction</h1>
+            <p className="mt-3 text-lg text-muted-foreground max-w-2xl">
+              Enter a PDB ID to generate per-residue secondary structure (8-state and 3-state) and confidence plots.
+            </p>
+          </div>
+          <TinyFoldTitansLogo />
         </div>
       </header>
       <main className="container pb-20">
