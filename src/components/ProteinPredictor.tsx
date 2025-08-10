@@ -346,7 +346,7 @@ export const ProteinPredictor = () => {
               aria-label="Open Protein Data Bank website in a new tab"
               className="inline-flex items-center gap-1 text-xs text-primary hover:underline underline-offset-4 px-2 py-1 rounded-md border bg-muted/50"
             >
-              Examples: RCSB PDB
+              Need Examples?
               <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
             </a>
           </div>
