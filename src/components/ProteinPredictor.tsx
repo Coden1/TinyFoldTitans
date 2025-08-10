@@ -143,6 +143,7 @@ async function predictSecondaryStructure(sequence: string): Promise<ResiduePredi
 export const ProteinPredictor = () => {
   const [pdbId, setPdbId] = useState<string>("");
   const [sequence, setSequence] = useState<string>("");
+  const [resolvedSequence, setResolvedSequence] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [preds, setPreds] = useState<ResiduePrediction[] | null>(null);
   const [summary, setSummary] = useState<{ residues: number; chains: number } | null>(null);
@@ -164,6 +165,7 @@ export const ProteinPredictor = () => {
 
       if (seqNormalized) {
         setSummary({ chains: 1, residues: seqNormalized.length });
+        setResolvedSequence(seqNormalized);
         const predictions = await predictSecondaryStructure(seqNormalized);
         setPreds(predictions);
         toast.success(`Predicted ${predictions.length} residues from sequence`);
@@ -174,6 +176,7 @@ export const ProteinPredictor = () => {
         
         // Use the first (longest) sequence for prediction
         const longestSeq = seqs.reduce((a, b) => a.length > b.length ? a : b);
+        setResolvedSequence(longestSeq);
         const predictions = await predictSecondaryStructure(longestSeq);
         setPreds(predictions);
         toast.success(`Predicted ${predictions.length} residues for primary chain`);
@@ -259,10 +262,10 @@ export const ProteinPredictor = () => {
           <div className="mt-4 text-sm text-muted-foreground space-y-1">
             <p>Entry summary: {summary.residues} residues across {summary.chains} chain(s)</p>
             <p>
-              PDB ID: <span className="text-foreground">{pdbId.trim() ? pdbId.trim().toUpperCase() : "—"}</span>
+              PDB ID: <span className="text-foreground">{pdbId.trim() ? pdbId.trim().toUpperCase() : "-"}</span>
             </p>
-            <p>
-              Sequence: <span className="text-foreground">{sequence.replace(/\s|\n|;/g, "").length ? `${sequence.replace(/\s|\n|;/g, "").length} residues` : "—"}</span>
+            <p className="break-words">
+              Sequence: <span className="text-foreground font-mono">{resolvedSequence ? resolvedSequence : "-"}</span>
             </p>
           </div>
         )}
