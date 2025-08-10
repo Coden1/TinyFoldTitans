@@ -199,6 +199,11 @@ export const ProteinPredictor = () => {
     const trimmedSequence = sequence.replace(/\s|\n|;/g, "").toUpperCase();
     
     if (!trimmedPdbId && !trimmedSequence) return;
+
+    // Do not add predefined sample IDs (with no sequence) to previous data to avoid redundancy
+    const isPredefinedSample = !!trimmedPdbId && !trimmedSequence &&
+      SAMPLE_DATA.some(s => s.pdbId.toUpperCase() === trimmedPdbId && (!s.sequence || s.sequence.length === 0));
+    if (isPredefinedSample) return;
     
     const name = trimmedPdbId 
       ? `${trimmedPdbId} - User Input`
@@ -369,6 +374,18 @@ export const ProteinPredictor = () => {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+        </div>
+        <div className="mb-4 p-3 bg-muted/50 rounded-md border text-sm">
+          Need examples? Browse the Protein Data Bank (PDB) and copy IDs or sequences from there: 
+          <a
+            href="https://www.rcsb.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline underline-offset-4"
+            aria-label="Visit the Protein Data Bank website"
+          >
+            rcsb.org
+          </a>.
         </div>
         <form onSubmit={onSubmit} className="flex flex-col md:flex-row gap-3 items-stretch md:items-end">
           <div className="flex-1">
