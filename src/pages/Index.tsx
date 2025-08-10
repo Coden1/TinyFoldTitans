@@ -18,8 +18,7 @@ const Index = () => {
           <div>
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Protein Secondary Structure Prediction</h1>
             <p className="mt-3 text-lg text-muted-foreground max-w-2xl">
-              Enter a PDB ID to generate per-residue secondary structure (8-state and 3-state) and confidence plots. The Protein Data Bank (PDB) is a public repository of 3D macromolecular structures — find IDs at
-              <a href="https://www.rcsb.org/" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-4"> rcsb.org</a>.
+              Enter a PDB ID to generate per-residue secondary structure (8-state and 3-state) and confidence plots.
             </p>
           </div>
           <div className="flex items-baseline gap-2"><span className="italic text-xs text-muted-foreground">by</span><span className="font-brand text-xl md:text-2xl font-semibold tracking-tight">TinyFoldTitans</span></div>
